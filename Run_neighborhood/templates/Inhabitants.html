@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+
+
+{% block title %}Homepage{% endblock %}
+
+{% block main %}
+    <div class="main">
+        <style>
+        .main{
+        background:#f3f3f3;
+        width:1000px;
+        height:800px;
+        margin:0 auto;
+        {#overflow:hidden;#}
+        }
+        </style>
+        <h4>Inhabitants</h4>
+
+        <div id="inhabitants-checkboxes">
+    </div>
+        <div id = "map"></div>
+        <div id="coord_id" d="{{coord}}" style="display:none"></div>
+
+    </div>
+
+
+
+
+        <script>
+         // Creating map options
+
+         var mapOptions = {
+            center: [31.78,35.21],
+            zoom: 12.4
+         }
+         // Creating a map object
+         var map = new L.map('map', mapOptions);
+         // Creating a Layer object
+         var layer = new L.TileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
+             {
+                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+               subdomains: 'abcd'
+             });
+         // Adding layer to the map
+         map.addLayer(layer);
+
+         var bounds = [[31.8490599,35.26], [31.72,35.1546362]];
+         var rect = L.rectangle(bounds, {weight: 1}).on('click', function (e) {
+
+         console.info(e);
+         }).addTo(map);
+         var coord_json = document.getElementById('coord_id').getAttribute('d');
+         var coord_list = JSON.parse(coord_json);
+         console.log('coord_list',coord_list)
+
+         var inhabitants_options= new Set()
+         coord_list.forEach(function(row){
+             inhabitants_options.add(row.Inhabitants)
+         })
+         console.log('inhabitants_options', inhabitants_options);
+         var filters = {
+             inhabitants: {}
+         }
+         inhabitants_options.forEach(function(inhabitant_type){
+             filters.inhabitants[inhabitant_type] = true
+         })
+
+         var inhabitantsCheckboxes = document.getElementById('inhabitants-checkboxes')
+         for (const [key, value] of Object.entries(filters.inhabitants)) {
+          console.log(key, value);
+          inhabitantsCheckboxes.innerHTML+=
+              '<input type="checkbox" id="'+key+'" name="'+key+'" checked="'+value+'"> <label for="'+key+'">'+key+'</label> '
+        }
+
+         var circles = []
+
+
+
+
+         function AddCirclesInhabitants(inhabitants){
+                 circles[inhabitants] = coord_list
+                 .filter(function(row){return row.Inhabitants == inhabitants })
+                 .map(function(row){
+                    var circleOptions = {weight: 0, fillOpacity: 0.5, color:'#008000'}
+                // console.log('titles: ', row.titles, 'latitudes_g: ', row.latitudes)
+                 return L.circle([row.latitudes_g, row.longitudes_g], 200, circleOptions)
+                  .addTo(map)
+                  .bindPopup(
+                      '<a href="/details/'+row.index+'">'+row.Neighborhood+'</a>'+
+                      '<br/>Inhabitants: '+row.Inhabitants
+
+                      {#+'<br/><a href="/neighbor_list">neighborhoods list</a>'#}
+                  );
+            })
+             }
+
+             for (var inhabitant_a of inhabitants_options){
+                AddCirclesInhabitants(inhabitant_a)
+                 console.log("adding name:",inhabitant_a);
+             }
+
+         var remove_circles = []
+
+        var inhabitantsCheckboxes = document.getElementById('inhabitants-checkboxes')
+         for (const [key, value] of Object.entries(filters.inhabitants)) {
+             console.log(key, value);
+             var inhabitantsCheckbox = document.getElementById(key)
+             inhabitantsCheckbox.addEventListener('change', function () {
+                 console.log("adding name:",key);
+                 if(this.checked == true){
+                     AddCirclesInhabitants(key)
+                     if(key=="null"){
+                         AddCirclesInhabitants(null)
+                         console.log("null:",key);
+                     }
+                 }
+                 else{circles[key].forEach(function(c){
+                  map.removeLayer(c)
+                 })
+                 }
+             })
+         }
+      </script>
+{% endblock %}

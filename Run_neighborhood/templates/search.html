@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Search{% endblock %}
+
+{% block main %}
+    <p class="search-info" style="text-align:center">Search results for:"{{key}}"
+    </p>
+    <ul style="list-style:none;padding-left:400px;">
+            {% for neighbor in neighbors %}
+            <li style="border-bottom:1px solid #eee;overflow:hidden;padding:10px 0;">
+            <div class="neighbor-group" style="float:left;width:660px;margin-left:10px;">
+                <p class="neighbor-name" style="font-weight:900;">
+                    <p>Neighborhood Name: {{ neighbor.Neighborhood }}</p>
+                </p>
+                <p class="neighbor-year" style="margin-right: 400px;">Founded year:{{ neighbor.Original_year_info }}</p>
+                <a href="{{ url_for('details', index=neighbor.index) }}">Details</a>
+
+            </div>
+        </li>
+
+        {% endfor %}
+
+
+    </ul>
+{% endblock %}

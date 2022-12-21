@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Details{% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block main %}
+<h3 class="neighborhood-name" style="text-align:center">
+    {{ neighborhood.Neighborhood }}
+</h3>
+    {% if neighborhood.is_othername == 1 %}
+    <p class="neighborhood-othername" style="text-align:center;">
+         {{ neighborhood.Other_name }}
+    </p>
+    {% endif %}
+    <p class="neighborhood-year-founded" style="text-align:center;">
+        Founded year:{{ neighborhood.Original_year_info }}
+    </p>
+    {% if neighborhood.source_NoJ == 1 %}
+        <p style="text-align: center"><a href={{neighborhood.links}} >Wikipedia Link</a></p>
+    {% elif neighborhood.source_LoP == 1 %}
+        <p style="text-align: center"><a href={{neighborhood.links}}>Wikipedia Link</a></p>
+    {% endif %}
+
+    {% if neighborhood.source_book == 1 %}
+        <p class="neighborhood-inhabitants" style="text-indent:200px;">
+            Inhabitants: {{ neighborhood.Inhabitants }}
+        </p>
+        <p class="neighborhood-Initiative" style="text-indent:200px;">
+            Initiative: {{ neighborhood.Initiative }}
+        </p>
+        <p class="neighborhood-Remarks" style="text-indent:200px;">
+            Remarks: {{ neighborhood.Remarks }}
+        </p>
+        <p class="neighborhood-Type" style="text-indent:200px;">
+            Type: {{ neighborhood.Type }}
+        </p>
+    {% endif %}
+    <h4>
+
+    </h4>
+    <div class="main">
+
+
+        <div id="coord_la" d="{{neighborhood.latitudes_g}}" style="display:none"></div>
+        <div id="coord_lo" d="{{neighborhood.longitudes_g}}" style="display:none"></div>
+{#    {% if ( neighborhood.latitudes_g >0) %}#}
+        <style>
+        .main{
+        background:#f3f3f3;
+        width:1000px;
+        height:800px;
+        margin:0 auto;
+        {#overflow:hidden;#}
+        }
+        #map{
+        width:600px;
+        height:600px;
+        margin:0 auto;
+        {#overflow:hidden;#}
+        }
+        </style>
+        <div id = "map"></div>
+{#    {% endif %}#}
+    </div>
+
+    <script>
+         // Creating map options
+
+         var coord_la = document.getElementById('coord_la').getAttribute('d');
+         var coord_lo = document.getElementById('coord_lo').getAttribute('d');
+         if(coord_la > 25){
+             var mapOptions = {
+                center: [31.78,35.21],
+                zoom: 12.4
+             }
+             // Creating a map object
+             var map = new L.map('map', mapOptions);
+             // Creating a Layer object
+             var layer = new L.TileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
+                 {
+                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                   subdomains: 'abcd'
+                 });
+             // Adding layer to the map
+             map.addLayer(layer);
+             var bounds = [[31.8490599,35.26], [31.72,35.1546362]];
+             var rect = L.rectangle(bounds, {weight: 1}).on('click', function (e) {
+             console.info(e);
+             }).addTo(map);
+
+             var point = L.marker([coord_la, coord_lo])
+                  .addTo(map);
+         }
+
+      </script>
+
+{% endblock %}
+

@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+
+
+{% block title %}Homepage{% endblock %}
+
+{% block main %}
+    <div class="main">
+        <style>
+        .main{
+        background:#f3f3f3;
+        width:1000px;
+        height:800px;
+        margin:0 auto;
+        {#overflow:hidden;#}
+        }
+        </style>
+        <h4>Initiative</h4>
+
+        <div id="Initiative-checkboxes">
+    </div>
+        <div id = "map"></div>
+        <div id="coord_id" d="{{coord}}" style="display:none"></div>
+
+    </div>
+
+
+
+
+        <script>
+         // Creating map options
+
+         var mapOptions = {
+            center: [31.78,35.21],
+            zoom: 12.4
+         }
+         // Creating a map object
+         var map = new L.map('map', mapOptions);
+         // Creating a Layer object
+         var layer = new L.TileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
+             {
+                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+               subdomains: 'abcd'
+             });
+         // Adding layer to the map
+         map.addLayer(layer);
+
+         var bounds = [[31.8490599,35.26], [31.72,35.1546362]];
+         var rect = L.rectangle(bounds, {weight: 1}).on('click', function (e) {
+
+         console.info(e);
+         }).addTo(map);
+         var coord_json = document.getElementById('coord_id').getAttribute('d');
+         var coord_list = JSON.parse(coord_json);
+         console.log('coord_list',coord_list)
+
+         var Initiative_options= new Set()
+         coord_list.forEach(function(row){
+             Initiative_options.add(row.Initiative)
+         })
+         console.log('Initiative_options', Initiative_options);
+         var filters = {
+             Initiative: {}
+         }
+         Initiative_options.forEach(function(Initiative_type){
+             filters.Initiative[Initiative_type] = true
+         })
+
+         var InitiativeCheckboxes = document.getElementById('Initiative-checkboxes')
+         for (const [key, value] of Object.entries(filters.Initiative)) {
+          console.log(key, value);
+          InitiativeCheckboxes.innerHTML+=
+              '<input type="checkbox" id="'+key+'" name="'+key+'" checked="'+value+'"> <label for="'+key+'">'+key+'</label> '
+        }
+
+         var circles = []
+
+
+
+
+         function AddCirclesInitiative(Initiative){
+                 circles[Initiative] = coord_list
+                 .filter(function(row){return row.Initiative == Initiative })
+                 .map(function(row){
+                    var circleOptions = {weight: 0, fillOpacity: 0.5, color:'#FF8000'}
+                // console.log('titles: ', row.titles, 'latitudes_g: ', row.latitudes)
+                 return L.circle([row.latitudes_g, row.longitudes_g], 200, circleOptions)
+                  .addTo(map)
+                  .bindPopup(
+                      '<a href="/details/'+row.index+'">'+row.Neighborhood+'</a>'+
+                      '<br/>Initiative: '+row.Initiative
+
+                      {#+'<br/><a href="/neighbor_list">neighborhoods list</a>'#}
+                  );
+            })
+             }
+
+             for (var Initiative_a of Initiative_options){
+                AddCirclesInitiative(Initiative_a)
+                 console.log("adding name:",Initiative_a);
+             }
+
+
+        var InitiativeCheckboxes = document.getElementById('Initiative-checkboxes')
+         for (const [key, value] of Object.entries(filters.Initiative)) {
+             console.log(key, value);
+             var InitiativeCheckbox = document.getElementById(key)
+             InitiativeCheckbox.addEventListener('change', function () {
+                 console.log("adding name:",key);
+                 if(this.checked == true){
+                     AddCirclesInitiative(key)
+                     if(key=="null"){
+                         AddCirclesInitiative(null)
+                         console.log("null:",key);
+                     }
+                 }
+                 else{circles[key].forEach(function(c){
+                  map.removeLayer(c)
+                 })
+                 }
+             })
+         }
+      </script>
+{% endblock %}

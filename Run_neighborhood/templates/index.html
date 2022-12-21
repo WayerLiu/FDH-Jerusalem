@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+
+
+{% block title %}Timeline Map{% endblock %}
+
+{% block main %}
+    <div class="main">
+        <style>
+        .main{
+        background:#f3f3f3;
+        width:1000px;
+        height:800px;
+        margin:0 auto;
+        {#overflow:hidden;#}
+        }
+        </style>
+        <div id = "map"></div>
+        <div id="coord_id" d="{{coord}}" style="display:none"></div>
+
+    </div>
+
+    <div class="slidecontainer">
+      <input type="range" min="1850" max="2000" value="2022" class="slider" id="year-founded">
+    </div>
+    <div>
+         Current foundation year: <span id="year-founded-value"></span>
+    </div>
+
+        <script>
+         // Creating map options
+
+         var mapOptions = {
+            center: [31.78,35.21],
+            zoom: 12.4
+         }
+         // Creating a map object
+         var map = new L.map('map', mapOptions);
+         // Creating a Layer object
+         var layer = new L.TileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
+             {
+                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+               subdomains: 'abcd'
+             });
+         // Adding layer to the map
+         map.addLayer(layer);
+
+         var bounds = [[31.8490599,35.26], [31.72,35.1546362]];
+         var rect = L.rectangle(bounds, {weight: 1}).on('click', function (e) {
+
+         console.info(e);
+         }).addTo(map);
+        {# coord_list = {{ coord}};#}
+        {# var coord_list = JSON.parse(coord);#}
+        {# console.log("json文件数据", {{ coord }});#}
+        {#document.getElementById('index').innerHTML = user.firstname + " " +#}
+        {#    user.lastname;#}
+        {# var coord_list = document.getElementById('coord_id').getAttribute('d');#}
+        {#alert(coord_list);#}
+        {# perfect_match = [{"titles":"Abu Tor","latitudes_g":31.7636388889,"longitudes_g":35.2326388889},{"titles":"American Colony, Jerusalem","latitudes_g":31.79,"longitudes_g":35.2311111111},{"titles":"Armenian Quarter","latitudes_g":31.775,"longitudes_g":35.2294444444},{"titles":"Arnona","latitudes_g":31.75,"longitudes_g":35.2166666667},{"titles":"Arzei HaBira","latitudes_g":31.7930805556,"longitudes_g":35.2237333333},{"titles":"Atarot","latitudes_g":31.85,"longitudes_g":35.2166666667},{"titles":"Bab a-Zahara","latitudes_g":31.7872222222,"longitudes_g":35.2316666667},{"titles":"Bab Hutta","latitudes_g":31.7819444444,"longitudes_g":35.2352777778},{"titles":"Baka, Jerusalem","latitudes_g":31.7591694444,"longitudes_g":35.2208166667},{"titles":"Batei Munkacs","latitudes_g":31.7811111111,"longitudes_g":35.2138888889},{"titles":"Batei Saidoff","latitudes_g":31.7863888889,"longitudes_g":35.21},{"titles":"Batei Ungarin","latitudes_g":31.7866666667,"longitudes_g":35.2241666667},{"titles":"Batei Warsaw","latitudes_g":31.7877777778,"longitudes_g":35.22},{"titles":"Bayit VeGan","latitudes_g":31.7683333333,"longitudes_g":35.1836111111},{"titles":"Beit David","latitudes_g":31.7830777778,"longitudes_g":35.2198194444},{"titles":"Beit HaKerem, Jerusalem","latitudes_g":31.7788888889,"longitudes_g":35.19},{"titles":"Beit Hanina","latitudes_g":31.8305555556,"longitudes_g":35.2161111111},{"titles":"Beit Orot","latitudes_g":31.7855555556,"longitudes_g":35.2463888889},{"titles":"Beit Safafa","latitudes_g":31.7438888889,"longitudes_g":35.2055555556},{"titles":"Beit Ya'akov, Jerusalem","latitudes_g":31.7852777778,"longitudes_g":35.2113888889},{"titles":"Beit Yisrael","latitudes_g":31.7888888889,"longitudes_g":35.2227777778},{"titles":"Bukharan Quarter","latitudes_g":31.7930555556,"longitudes_g":35.2188888889},{"titles":"Christian Quarter","latitudes_g":31.7784722222,"longitudes_g":35.2294},{"titles":"City of David (archaeological site)","latitudes_g":31.7736111111,"longitudes_g":35.2355555556},{"titles":"E1 (West Bank)","latitudes_g":31.8011111111,"longitudes_g":35.2816666667},{"titles":"East Talpiot","latitudes_g":31.75,"longitudes_g":35.235},{"titles":"Ein Karem","latitudes_g":31.7680555556,"longitudes_g":35.1622222222},{"titles":"Emek Refaim","latitudes_g":31.7632027778,"longitudes_g":35.2191222222},{"titles":"Even Yisrael (neighborhood)","latitudes_g":31.7833333333,"longitudes_g":35.2172222222},{"titles":"Ezrat Torah","latitudes_g":31.7972222222,"longitudes_g":35.2136111111},{"titles":"Ezrat Yisrael","latitudes_g":31.7840555556,"longitudes_g":35.21775},{"titles":"French Hill","latitudes_g":31.8057,"longitudes_g":35.2389916667},{"titles":"German Colony, Jerusalem","latitudes_g":31.7631666667,"longitudes_g":35.2210527778},{"titles":"Geula","latitudes_g":31.7833333333,"longitudes_g":35.2166666667},{"titles":"Gilo","latitudes_g":31.7313888889,"longitudes_g":35.1863888889},{"titles":"Givat Beit HaKerem","latitudes_g":31.7733333333,"longitudes_g":35.1905555556},{"titles":"Givat HaMatos","latitudes_g":31.7388972222,"longitudes_g":35.2083055556},{"titles":"Givat HaMivtar","latitudes_g":31.8030583333,"longitudes_g":35.2312861111},{"titles":"Givat Massuah","latitudes_g":31.75,"longitudes_g":35.1677777778},{"titles":"Givat Mordechai","latitudes_g":31.765,"longitudes_g":35.1972222222},{"titles":"Givat Oranim","latitudes_g":31.7613888889,"longitudes_g":35.2063888889},{"titles":"Givat Ram","latitudes_g":31.7833333333,"longitudes_g":35.2},{"titles":"Givat Shaul","latitudes_g":31.789325,"longitudes_g":35.1918694444},{"titles":"Greek Colony, Jerusalem","latitudes_g":31.7612861111,"longitudes_g":35.2135416667},{"titles":"Har Homa","latitudes_g":31.7252777778,"longitudes_g":35.2216666667},{"titles":"Har Hotzvim","latitudes_g":31.8025277778,"longitudes_g":35.2096361111},{"titles":"Har Nof","latitudes_g":31.7847222222,"longitudes_g":35.175},{"titles":"Hutzot Hayotzer","latitudes_g":31.775225,"longitudes_g":35.2261805556},{"titles":"Ir Ganim","latitudes_g":31.7540611111,"longitudes_g":35.1711416667},{"titles":"Isawiya","latitudes_g":31.7986111111,"longitudes_g":35.2483333333},{"titles":"Jabel Mukaber","latitudes_g":31.7547222222,"longitudes_g":35.2411111111},{"titles":"Jerusalem","latitudes_g":31.7788888889,"longitudes_g":35.2255555556},{"titles":"Jerusalem Gateway","latitudes_g":31.7884222222,"longitudes_g":35.2007027778},{"titles":"Downtown Triangle (Jerusalem)","latitudes_g":31.7821666667,"longitudes_g":35.2178611111},{"titles":"Jewish Quarter (Jerusalem)","latitudes_g":31.7761111111,"longitudes_g":35.2322222222},{"titles":"Kafr 'Aqab","latitudes_g":31.8758333333,"longitudes_g":35.2197222222},{"titles":"Katamon","latitudes_g":31.7611111111,"longitudes_g":35.2069444444},{"titles":"Kerem Avraham","latitudes_g":31.79,"longitudes_g":35.2172222222},{"titles":"Kiryat HaLeom","latitudes_g":31.7840416667,"longitudes_g":35.2005416667},{"titles":"Kiryat HaMemshala","latitudes_g":31.7809166667,"longitudes_g":35.2006888889},{"titles":"Kiryat HaYovel","latitudes_g":31.7575,"longitudes_g":35.1777777778},{"titles":"Kiryat Mattersdorf","latitudes_g":31.7958166667,"longitudes_g":35.2018694444},{"titles":"Kiryat Menachem","latitudes_g":31.7579472222,"longitudes_g":35.1647472222},{"titles":"Kiryat Menachem Begin","latitudes_g":31.7971944444,"longitudes_g":35.2335083333},{"titles":"Kiryat Moshe","latitudes_g":31.7866666667,"longitudes_g":35.1955555556},{"titles":"Kiryat Sanz, Jerusalem","latitudes_g":31.7980555556,"longitudes_g":35.2111111111},{"titles":"Kiryat Shmuel, Jerusalem","latitudes_g":31.7694444444,"longitudes_g":35.2111111111},{"titles":"Kiryat Unsdorf","latitudes_g":31.795,"longitudes_g":35.2044444444},{"titles":"Kiryat Wolfson","latitudes_g":31.7766666667,"longitudes_g":35.21},{"titles":"Knesset Yisrael","latitudes_g":31.7816666667,"longitudes_g":35.2136111111},{"titles":"Lifta","latitudes_g":31.7952777778,"longitudes_g":35.1963888889},{"titles":"Ma'ale HaZeitim","latitudes_g":31.7733333333,"longitudes_g":35.2402777778},{"titles":"Ma'alot Dafna","latitudes_g":31.7961111111,"longitudes_g":35.2255555556},{"titles":"Mahane Israel","latitudes_g":31.7766472222,"longitudes_g":35.2215472222},{"titles":"Mahane Yehuda (neighborhood)","latitudes_g":31.7847222222,"longitudes_g":35.2108333333},{"titles":"Malha","latitudes_g":31.7522222222,"longitudes_g":35.1819444444},{"titles":"Mamilla","latitudes_g":31.7761166667,"longitudes_g":35.2234555556},{"titles":"Mazkeret Moshe","latitudes_g":31.7830555556,"longitudes_g":35.2138888889},{"titles":"Mea Shearim","latitudes_g":31.7869444444,"longitudes_g":35.2222222222},{"titles":"Mekor Baruch","latitudes_g":31.7886305556,"longitudes_g":35.2106444444},{"titles":"Mekor Chaim","latitudes_g":31.7540416667,"longitudes_g":35.2125555556},{"titles":"Mishkenot Sha'ananim","latitudes_g":31.7714027778,"longitudes_g":35.2243472222},{"titles":"Motza","latitudes_g":31.7938888889,"longitudes_g":35.1683333333},{"titles":"Mughrabi Quarter","latitudes_g":31.7766666667,"longitudes_g":35.2341666667},{"titles":"Muristan","latitudes_g":31.7775,"longitudes_g":35.2297222222},{"titles":"Muslim Quarter (Jerusalem)","latitudes_g":31.7808333333,"longitudes_g":35.2325},{"titles":"Musrara","latitudes_g":31.7825,"longitudes_g":35.2255555556},{"titles":"Nachlaot","latitudes_g":31.7827222222,"longitudes_g":35.211675},{"titles":"Nahalat Shimon","latitudes_g":31.7907,"longitudes_g":35.2282388889},{"titles":"Nahalat Shiv'a","latitudes_g":31.7802777778,"longitudes_g":35.2191666667},{"titles":"Nayot","latitudes_g":31.7679916667,"longitudes_g":35.2029111111},{"titles":"Neve Granot","latitudes_g":31.7696777778,"longitudes_g":35.2043583333},{"titles":"Neve Sha'anan, Jerusalem","latitudes_g":31.7740583333,"longitudes_g":35.2015888889},{"titles":"Neve Yaakov","latitudes_g":31.8411111111,"longitudes_g":35.2425},{"titles":"Nof Zion","latitudes_g":31.7532361111,"longitudes_g":35.2427777778},{"titles":"Old City of Jerusalem","latitudes_g":31.7766666667,"longitudes_g":35.2341666667},{"titles":"Mount of Olives","latitudes_g":31.7783333333,"longitudes_g":35.2438888889},{"titles":"Pat, Jerusalem","latitudes_g":31.7505555556,"longitudes_g":35.2002777778},{"titles":"Pisgat Ze'ev","latitudes_g":31.825,"longitudes_g":35.2416666667},{"titles":"Al-Ram","latitudes_g":31.8536111111,"longitudes_g":35.2333333333},{"titles":"Ramat Beit HaKerem","latitudes_g":31.7703722222,"longitudes_g":35.1917416667},{"titles":"Ramat Denya","latitudes_g":31.7611111111,"longitudes_g":35.1805555556},{"titles":"Ramat Eshkol","latitudes_g":31.8026,"longitudes_g":35.2234555556},{"titles":"Ramat Rachel","latitudes_g":31.74,"longitudes_g":35.2188888889},{"titles":"Ramat Sharett","latitudes_g":31.7612333333,"longitudes_g":35.1870861111},{"titles":"Ramat Shlomo","latitudes_g":31.8104777778,"longitudes_g":35.2180472222},{"titles":"Ramot Polin","latitudes_g":31.82,"longitudes_g":35.1933333333},{"titles":"Ramot, Jerusalem","latitudes_g":31.8119444444,"longitudes_g":35.2},{"titles":"Ras al-Amud","latitudes_g":31.7713888889,"longitudes_g":35.2436111111},{"titles":"Rassco (neighborhood)","latitudes_g":31.7625444444,"longitudes_g":35.20305},{"titles":"Rehavia","latitudes_g":31.774475,"longitudes_g":35.2119972222},{"titles":"Romema","latitudes_g":31.79,"longitudes_g":35.2038888889},{"titles":"Russian Compound","latitudes_g":31.782075,"longitudes_g":35.2217138889},{"titles":"Sanhedria","latitudes_g":31.7983333333,"longitudes_g":35.2208333333},{"titles":"Sanhedria Murhevet","latitudes_g":31.8019444444,"longitudes_g":35.2180555556},{"titles":"Sha'arei Hesed","latitudes_g":31.7796194444,"longitudes_g":35.2112472222},{"titles":"Sha'arei Yerushalayim","latitudes_g":31.7875,"longitudes_g":35.2097222222},{"titles":"Sharafat, East Jerusalem","latitudes_g":31.7430555556,"longitudes_g":35.1941666667},{"titles":"Sheikh Badr","latitudes_g":31.7861111111,"longitudes_g":35.2036111111},{"titles":"Sheikh Jarrah","latitudes_g":31.7944444444,"longitudes_g":35.2319444444},{"titles":"Shikun Chabad","latitudes_g":31.7930555556,"longitudes_g":35.2127777778},{"titles":"Shimon HaTzadik","latitudes_g":31.7923888889,"longitudes_g":35.2309611111},{"titles":"Silwan","latitudes_g":31.77,"longitudes_g":35.2369444444},{"titles":"Sur Baher","latitudes_g":31.7372222222,"longitudes_g":35.2330555556},{"titles":"Talbiya","latitudes_g":31.7666666667,"longitudes_g":35.2166666667},{"titles":"Talpiot","latitudes_g":31.75,"longitudes_g":35.2166666667},{"titles":"Tel Arza","latitudes_g":31.795,"longitudes_g":35.2152777778},{"titles":"At-Tur (Mount of Olives)","latitudes_g":31.7802777778,"longitudes_g":35.2463888889},{"titles":"Umm Tuba","latitudes_g":31.7333333333,"longitudes_g":35.2333333333},{"titles":"Wadi al-Joz","latitudes_g":31.7888888889,"longitudes_g":35.2377777778},{"titles":"Wadi Hilweh","latitudes_g":31.7736111111,"longitudes_g":35.2355555556},{"titles":"Al-Walaja","latitudes_g":31.7408333333,"longitudes_g":35.1461111111},{"titles":"Yefeh Nof","latitudes_g":31.7791666667,"longitudes_g":35.1863888889},{"titles":"Yemin Moshe","latitudes_g":31.7719444444,"longitudes_g":35.225},{"titles":"Zikhron Moshe","latitudes_g":31.7875,"longitudes_g":35.2166666667},{"titles":"Zikhron Tuvya","latitudes_g":31.7833138889,"longitudes_g":35.2121416667},{"titles":"Zikhron Yosef","latitudes_g":31.7836111111,"longitudes_g":35.21},{"titles":"Mount Zion","latitudes_g":31.7716666667,"longitudes_g":35.2286111111},{"titles":"Bukharim","latitudes_g":31.7930555556,"longitudes_g":35.2188888889},{"titles":"Givat HaVradim","latitudes_g":31.7625444444,"longitudes_g":35.20305},{"titles":"City of David (Silwan)","latitudes_g":31.7736111111,"longitudes_g":35.2355555556},{"titles":"Al-Issawiya","latitudes_g":31.7986111111,"longitudes_g":35.2483333333},{"titles":"Har Hazeitim","latitudes_g":31.7783333333,"longitudes_g":35.2438888889},{"titles":"Kiryat Belz","latitudes_g":31.795,"longitudes_g":35.2044444444},{"titles":"Mount Scopus","latitudes_g":31.7925,"longitudes_g":35.2441666667},{"titles":"Musrara, Jerusalem","latitudes_g":31.7825,"longitudes_g":35.2255555556},{"titles":"Old City (Jerusalem)","latitudes_g":31.7766666667,"longitudes_g":35.2341666667},{"titles":"Moroccan Quarter","latitudes_g":31.7766666667,"longitudes_g":35.2341666667},{"titles":"Ramot","latitudes_g":31.8119444444,"longitudes_g":35.2},{"titles":"Romema, Jerusalem","latitudes_g":31.79,"longitudes_g":35.2038888889},{"titles":"San Simon, Jerusalem","latitudes_g":31.7611111111,"longitudes_g":35.2069444444},{"titles":"Unsdorf","latitudes_g":31.795,"longitudes_g":35.2044444444}]#}
+         var coord_json = document.getElementById('coord_id').getAttribute('d');
+         var coord_list = JSON.parse(coord_json);
+         console.log('coord_list',coord_list)
+
+         var circles = []
+         function addCirclesAfterYear(year){
+
+             circles = coord_list
+                 .filter(function(row){return row.Year_founded<=(''+year) && row.Year_founded>(''+0)})
+                 .map(function(row){
+
+                    var circleOptions = {weight: 0, fillOpacity: 0.5}
+                // console.log('titles: ', row.titles, 'latitudes_g: ', row.latitudes)
+                 return L.circle([row.latitudes_g, row.longitudes_g], 200, circleOptions)
+                  .addTo(map)
+                  .bindPopup(
+                      '<a href="/details/'+row.index+'">'+row.Neighborhood+'</a>'+
+                      '<br/>year founded: '+row.Original_year_info
+
+                      {#+'<br/><a href="/neighbor_list">neighborhoods list</a>'#}
+                  );
+            })
+         }
+         function addCirclesWithoutyear(){
+
+             circles = coord_list
+                 .filter(function(row){return row.Year_founded>=(''+0) && row.Year_founded<=(''+0)})
+                 .map(function(row){
+                    var circleOptions = {weight: 0, fillOpacity: 0.5, color:'#8888ff'}
+                // console.log('titles: ', row.titles, 'latitudes_g: ', row.latitudes)
+                 return L.circle([row.latitudes_g, row.longitudes_g], 200, circleOptions)
+                  .addTo(map)
+                  .bindPopup(
+                      '<a href="/details/'+row.index+'">'+row.Neighborhood+'</a>'+
+                      '<br/>year founded: '+row.Original_year_info
+
+                      {#+'<br/><a href="/neighbor_list">neighborhoods list</a>'#}
+                  );
+            })
+         }
+         addCirclesWithoutyear()
+        addCirclesAfterYear(2000)
+        {#console.log('circles', circles)#}
+        var slider = document.getElementById("year-founded");
+        var output = document.getElementById("year-founded-value");
+         // Update the current slider value (each time you drag the slider handle)
+        slider.oninput = function() {
+            var minYear = this.value
+              output.innerHTML = minYear;
+              circles.forEach(function(c){
+                  map.removeLayer(c)
+              })
+            addCirclesAfterYear(minYear)
+        }
+        output.innerHTML = slider.value;
+      </script>
+{% endblock %}
